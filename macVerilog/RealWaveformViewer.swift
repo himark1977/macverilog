@@ -1,6 +1,5 @@
 import SwiftUI
 
-// --- VIZUALIZATORUL GRAFIC INTERACTIV ---
 struct RealWaveformViewer: View {
     let signals: [VCDSignal]
     
