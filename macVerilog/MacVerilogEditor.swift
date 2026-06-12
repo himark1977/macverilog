@@ -44,7 +44,7 @@ struct MacVerilogEditor: NSViewRepresentable {
     func updateNSView(_ nsView: NSScrollView, context: Context) {
         guard let textView = nsView.documentView as? NSTextView else { return }
         
-        // Evităm buclele infinite de update dacă textul este deja identic
+        // no loops if the code is identic
         if textView.string != text {
             textView.string = text
             applyHighlighting(to: textView)
@@ -55,26 +55,26 @@ struct MacVerilogEditor: NSViewRepresentable {
         Coordinator(self)
     }
     
-    // --- MOTORUL DE SYNTAX HIGHLIGHTING ---
+    // --- Syntax highliting ---
     func applyHighlighting(to textView: NSTextView) {
         guard let textStorage = textView.textStorage else { return }
         let fullRange = NSRange(location: 0, length: textStorage.length)
         
-        // Resetează stilul la textul brut
+        // Reset style
         textStorage.addAttribute(.foregroundColor, value: textColor, range: fullRange)
         textStorage.addAttribute(.font, value: NSFont.monospacedSystemFont(ofSize: 13, weight: .regular), range: fullRange)
         
         let code = textView.string
         
-        // 1. Reguli de Highlight (Regex)
+        // 1. Highliting syntax
         let rules: [(regex: String, color: NSColor)] = [
-            // Cuvinte cheie structurale
+            // keywords
             ("\\b(module|endmodule|initial|always|begin|end|assign|input|output|posedge|negedge|if|else|case|endcase)\\b", keywordColor),
-            // Tipuri de date
+            // data types
             ("\\b(reg|wire|integer|parameter)\\b", typeColor),
-            // Funcții de sistem ($)
+            // system functions ($)
             ("\\$[a-zA-Z_0-9]+", systemColor),
-            // Comentarii single-line (//...)
+            // comments (//...)
             ("//.*", commentColor)
         ]
         

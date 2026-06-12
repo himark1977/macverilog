@@ -10,7 +10,7 @@ struct VCDSignal: Identifiable {
 
 struct TimePoint {
     let time: Int
-    let value: String // Modificat în String pentru a suporta și magistrale (ex: "b0001" sau "1")
+    let value: String // (ex: "b0001" sau "1")
 }
 
 class VerilogCore {
@@ -27,7 +27,7 @@ class VerilogCore {
         do {
             try sourceCode.write(to: designURL, atomically: true, encoding: .utf8)
         } catch {
-            return "❌ Eroare la scrierea fișierului pe disk.\n"
+            return "❌ Error at opening the file on disk.\n"
         }
         
         let process = Process()
@@ -49,11 +49,11 @@ class VerilogCore {
             
             if process.terminationStatus != 0 {
                 let errorData = errorPipe.fileHandleForReading.readDataToEndOfFile()
-                return "❌ Eroare Sintaxă:\n" + (String(data: errorData, encoding: .utf8) ?? "")
+                return "❌ Syntax Errror:\n" + (String(data: errorData, encoding: .utf8) ?? "")
             }
-            return FileManager.default.fileExists(atPath: outputVCDURL.path) ? "✅ Compilat și simulat cu succes!\n" : "⚠️ wave.vcd lipsă.\n"
+            return FileManager.default.fileExists(atPath: outputVCDURL.path) ? "✅ Compiled and simulated OK!\n" : "⚠️ wave.vcd missing.\n"
         } catch {
-            return "❌ Eroare subproces: \(error.localizedDescription)\n"
+            return "❌ Error subprocess: \(error.localizedDescription)\n"
         }
     }
     
@@ -68,7 +68,7 @@ class VerilogCore {
             let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
             if trimmed.isEmpty { continue }
             
-            // $var reg 4 ! count [3:0] $end sau $var wire 1 # clk $end
+            // $var reg 4 ! count [3:0] $end or $var wire 1 # clk $end
             if trimmed.hasPrefix("$var") {
                 let parts = trimmed.components(separatedBy: .whitespaces).filter { !$0.isEmpty }
                 if parts.count >= 5 {
@@ -76,7 +76,7 @@ class VerilogCore {
                     let symbol = parts[3]
                     let name = parts[4]
                     
-                    // Prevenim duplicarea biților individuali generați de iverilog pentru instanțieri
+                    // No double bits created by iverilog
                     if !signals.contains(where: { $0.name == name }) {
                         signals.append(VCDSignal(name: name, symbol: symbol, isBus: size != "1", timeline: []))
                     }
@@ -86,7 +86,7 @@ class VerilogCore {
                     currentTime = timeInt
                 }
             }
-            // Schimbare magistrală: b0001 !
+            // Switch: b0001 !
             else if trimmed.hasPrefix("b") {
                 let parts = trimmed.dropFirst().components(separatedBy: .whitespaces).filter { !$0.isEmpty }
                 if parts.count == 2 {
@@ -97,7 +97,7 @@ class VerilogCore {
                     }
                 }
             }
-            // Schimbare fir scalar: 1# sau 0#
+            // Switch wire: 1# sau 0#
             else if trimmed.count >= 2 && (trimmed.hasPrefix("0") || trimmed.hasPrefix("1")) {
                 let val = String(trimmed.prefix(1))
                 let symbol = String(trimmed.dropFirst())

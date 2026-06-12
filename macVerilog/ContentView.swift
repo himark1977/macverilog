@@ -65,7 +65,7 @@ struct ContentView: View {
             #endif
         } detail: {
             VStack(spacing: 0) {
-                // Toolbar superior
+                // top toolbar
                 HStack {
                     HStack(spacing: 12) {
                         Menu {
@@ -116,7 +116,7 @@ struct ContentView: View {
                 
                 Divider()
                 
-                // Consola Tcl
+                // Tcl console
                 VStack(alignment: .leading, spacing: 0) {
                     Text("Tcl Console").font(.caption).bold().padding(.horizontal, 10).padding(.vertical, 5)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -140,7 +140,7 @@ struct ContentView: View {
         let tempDirectory = FileManager.default.temporaryDirectory
         let core = VerilogCore()
         
-        // Culegem tot codul din manager pentru iverilog
+        // we take all the code for iverilog
         let fullCode = projectManager.filesContent.values.joined(separator: "\n\n")
         
         DispatchQueue.global(qos: .userInitiated).async {

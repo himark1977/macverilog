@@ -72,7 +72,7 @@ class ProjectManager: NSObject, ObservableObject {
             groups[idx].files.append(newFile)
             filesContent[newFile.id] = """
             module \(name.replacingOccurrences(of: ".v", with: ""));
-                // Cod hardware aici
+                // Hardware code here
             endmodule
             """
             selectedFileId = newFile.id
@@ -91,7 +91,7 @@ class ProjectManager: NSObject, ObservableObject {
                     groups[idx].files.append(openedFile)
                     filesContent[openedFile.id] = content
                     selectedFileId = openedFile.id
-                    return "✅ Deschis: \(url.lastPathComponent)\n"
+                    return "✅ Open: \(url.lastPathComponent)\n"
                 }
             }
         }
@@ -115,7 +115,7 @@ class ProjectManager: NSObject, ObservableObject {
                     groups[gIdx].files[fIdx].name = url.lastPathComponent
                 }
             }
-            return "✅ Salvat: \(url.lastPathComponent)\n"
+            return "✅ Saved: \(url.lastPathComponent)\n"
         }
         return nil
     }
@@ -123,14 +123,14 @@ class ProjectManager: NSObject, ObservableObject {
     func deleteCurrentFile() -> String? {
         guard let currentId = selectedFileId else { return nil }
         let totalFiles = groups.flatMap { $0.files }.count
-        guard totalFiles > 1 else { return "⚠️ Nu poți șterge ultimul fișier.\n" }
+        guard totalFiles > 1 else { return "⚠️ You can't delete the last file.\n" }
         
         for idx in 0..<groups.count {
             if let fIdx = groups[idx].files.firstIndex(where: { $0.id == currentId }) {
                 groups[idx].files.remove(at: fIdx)
                 filesContent.removeValue(forKey: currentId)
                 selectedFileId = groups.flatMap({ $0.files }).first?.id
-                return "🗑️ Fișier eliminat.\n"
+                return "🗑️ File deleted.\n"
             }
         }
         return nil

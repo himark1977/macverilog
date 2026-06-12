@@ -15,16 +15,16 @@ struct RealWaveformViewer: View {
             ContentUnavailableView("No Simulation Data", systemImage: "waveform.path.badge.minus")
         } else {
             VStack(spacing: 0) {
-                // Bara de status superioară pentru Timpul Selectat
+                // Top bar for time selected
                 HStack {
                     Image(systemName: "clock.halo")
                         .foregroundColor(.orange)
                     if let time = selectedTime {
-                        Text("Timp Cursor: \(time) ns")
+                        Text("Time at cursor: \(time) ns")
                             .font(.system(.body, design: .monospaced))
                             .bold()
                     } else {
-                        Text("Mișcă mouse-ul peste grafic pentru probe...")
+                        Text("Move the mouse for the probe...")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -41,14 +41,14 @@ struct RealWaveformViewer: View {
                         ForEach(signals, id: \.id) { (sig: VCDSignal) in
                             HStack(spacing: 0) {
                                 
-                                // 1. Eticheta din stânga + Valoarea Sondată (Probe)
+                                // 1. Label + Probe
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(sig.name)
                                         .font(.system(.body, design: .monospaced))
                                         .bold()
                                         .foregroundColor(sig.isBus ? .orange : .cyan)
                                     
-                                    // Valoarea semnalului la momentul de timp selectat
+                                    // Value of signal at time selected
                                     Text(getValueAtSelectedTime(signal: sig, time: selectedTime))
                                         .font(.system(size: 11, weight: .heavy, design: .monospaced))
                                         .foregroundColor(.white)
@@ -65,7 +65,7 @@ struct RealWaveformViewer: View {
                                     .fill(Color.gray.opacity(0.3))
                                     .frame(width: 1, height: rowHeight)
                                 
-                                // 2. Desenul grafic + Suprapunere Cursor
+                                // 2. Graphical drawing
                                 Canvas { context, size in
                                     let midY = rowHeight / 2
                                     
@@ -98,7 +98,7 @@ struct RealWaveformViewer: View {
                                             context.draw(text, in: textRect)
                                         }
                                     } else {
-                                        // --- RENDER FIR SCALAR ---
+                                        // --- RENDER Wire ---
                                         var path = Path()
                                         let highY = midY - 12
                                         let lowY = midY + 12
@@ -122,7 +122,7 @@ struct RealWaveformViewer: View {
                                         }
                                     }
                                     
-                                    // --- CURSOR VERTICAL ---
+                                    // --- VERTICAL Cursor ---
                                     if let x = hoverX {
                                         var cursorPath = Path()
                                         cursorPath.move(to: CGPoint(x: x, y: 0))
